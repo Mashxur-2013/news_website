@@ -1,0 +1,13 @@
+{% extends 'news/base.html' %}
+{% load static %}
+{% block title %} Contact Us {% endblock title %}
+{% block content %}
+
+<form action="#" class="contact_form" method="POST">{% csrf_token %}
+      <input class="form-control" type="text" placeholder="Name" name="name">
+      <input class="form-control" type="email" placeholder="Email" name="email">
+      <textarea class="form-control" cols="30" rows="10" placeholder="Message" name="Message"></textarea>
+      <input type="submit" value="Xabar jo'natish">
+      </form>
+
+{% endblock content %}
