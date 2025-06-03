@@ -1,14 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>News detail page</title>
-</head>
-<body>
+{{% extends 'news/base.html' %}
+{% load static %}
+{% load hitcount_tags %}
+{% load i18n %}
+{% block content %}
+
 <h1> {{news.title }}</h1>
-<p>Published date: {{news.publish_time }}</p>
-<p>{{ news.body }}</p>
+<p>Published date: {{news.publish_time }} |Kurishlar soni <i class="fa fa-eye" aria-hidden="true" style="color:blue"></i> {% get_hit_count for news %}</p>
+<div class="img_detail">
+    <a href="#"> <img src="{{ news.image.url }}" alt=""></a>
+    <p>{{ news.body }}</p>
+</div>
 
+{% if request.user.is_authenticated and request.user.is_superuser %}
+    <div class="card-footer text-center">
+        <a href="{% url 'news_update' news.slug %}">Tahrirlash</a> |
+        <a href="{% url 'news_delete' news.slug %}">O'chirish</a>
 
-</body>
-</html>
+    </div>
+{% endif %} <hr>
+<h4 style="color: blue">Bu yangilikga {{comment_count }} ta izoh qoldirilgan</h4>
+{% for comment in comments %}
+    <div class="comments" style="padding:10px">
+        <p class="font-weight-bold">
+            {{comment.user}}
+            <span class="text-muted font-weight-normal">
+                {{comment.created.time }}
+            </span>
+        </p>
+        {{ comment.body | linebreaks }}
+
+    </div>
+{% endfor %}
+{% if request.user.is_authenticated %}
+<div class="col-md-8 card mb-4 mt-3">
+    <div class="card-body">
+        <h3>Izoh qoldirish</h3>
+        <form method="POST" style="margin-top:1.3em">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary btn-lg">
+                Yuborish
+            </button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="card-body">
+    <p class="text-danger">Faqat ro'yxatdan o'tgan foydalanuvchilar izoh qoldirishi mumkin</p>
+    <p>Izoh qoldirish uchun:
+    <a href="{% url 'user_register' %}">Ro'yhatdan o'tish</a>
+    yoki <a href="{% url 'login' %}">Saytga kirish</a></p>
+</div>
+
+{% endif %}
+{% endblock %}
+

@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load i18n %}
 <html>
 <head>
 <title>NewsFeed</title>
@@ -34,9 +34,34 @@
               <li><a href="{% url 'home_page' %}">Home</a></li>
               <li><a href="#">About</a></li>
               <li><a href="{% url 'contact_page' %}">Contact</a></li>
+              {% if user.is_authenticated and user.is.superuser %}
+              <li><a href="{% url 'admin_page'%}">Admin sahifasi</a></li>
+              {% endif %}
+          <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}">
+              <select name="language">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                  <option value="{{ language.code}}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
+                    {{ language.name_local }} ({{ language.code }})
+                  </option>
+              {% endfor %}
+              </select>
+                <input type="submit" value="Go">
+              </form>
+
             </ul>
           </div>
           <div class="header_top_right">
+
+            {% if request.user.is_authenticated %}
+            <p><a href="{% url 'user_profile' %}" style="color:yellow">My profile</a></p>
+            <p><a href="{% url 'logout' %}" style="color:yellow">Log out</a></p>
+            {% else %}
+            <p><a href="{% url 'login' %}" style="color:yellow">Saytga kirish</a></p>
+            {% endif %}
             <p>{% now "jS F Y H:i" %}</p>
           </div>
         </div>
@@ -57,20 +82,28 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav main_nav">
           <li class="active"><a href="{% url 'home_page' %}"><span class="fa fa-home desktop-home"></span><span class="mobile-show">Home</span></a></li>
-          <li><a href="#">Technology</a></li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mobile</a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Android</a></li>
-              <li><a href="#">Samsung</a></li>
-              <li><a href="#">Nokia</a></li>
-              <li><a href="#">Walton Mobile</a></li>
-              <li><a href="#">Sympony</a></li>
-            </ul>
-          </li>
-          <li><a href="#">Laptops</a></li>
-          <li><a href="#">Tablets</a></li>
-          <li><a href=" ">Contact Us</a></li>
+          <li><a href="{% url 'tech_news_page' %}">{% blocktrans %} Texnologiya {% endblocktrans %}</a></li>
+<!--          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mobile</a>-->
+<!--            <ul class="dropdown-menu" role="menu">-->
+<!--              <li><a href="#">Android</a></li>-->
+<!--              <li><a href="#">Samsung</a></li>-->
+<!--              <li><a href="#">Nokia</a></li>-->
+<!--              <li><a href="#">Walton Mobile</a></li>-->
+<!--              <li><a href="#">Sympony</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+          <li><a href="{% url 'local_news_page' %}">Maxalliy</a></li>
+          <li><a href="{% url 'xorij_news_page' %}">Xorij</a></li>
+          <li><a href="{% url 'sport_news_page' %}">Sport</a></li>
+          <li><a href="{% url 'contact_page' %}">Contact Us</a></li>
           <li><a href="{% url '404_page' %}">404 Page</a></li>
+          <li>
+            <form method="get" action="{% url 'search_results' %}">
+              <input type="search" name="q" placeholder="Qidiruv...." class="form-control">
+              <button type="submit">{% blocktrans %} Qidirish {% endblocktrans %}</button>
+
+            </form>
+          </li>
         </ul>
       </div>
     </nav>

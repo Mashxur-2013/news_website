@@ -1,0 +1,20 @@
+{% extends 'news/base.html' %}
+{% load hitcount_tags %}
+{% load static %}
+{% block title %} Sport xabarlari {% endblock title %}
+
+{% block content %}
+{% for news in sport_xabarlar %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8">
+                         <a href="{{ news.get_absolute_url }}">
+                        <img src="{{ news.image.url }}" alt="{{ news.title }}" style=" width:50% ">
+                        <h3>{{ news.title }}</h3>
+                             <p>Ko'rilganlar soni: <i class="fa fa-eye" aria-hidden="true" style="color:blue"></i> {% get_hit_count for news %}</p>
+                         </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+{% endblock content %}
